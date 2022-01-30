@@ -18,23 +18,17 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin {
   PersonViewModel user = PersonViewModel();
-  String username = "";
-  bool showLoading = true;
-  List<PersonViewModel> users = List<PersonViewModel>.empty(growable: true);
+
+  RxBool showLoading = true.obs;
+  RxList<PersonViewModel> users = <PersonViewModel>[].obs;
+  // List<PersonViewModel> users = List<PersonViewModel>.empty(growable: true);
   @override
   void initState() {
     Get.closeAllSnackbars();
     users = Get.find();
+    //create db in GetX
     GetStorage userName = GetStorage();
-    username = userName.read("name");
-
-    for (var item in users) {
-      if (username == item.email) {
-        user = item;
-
-        userName.write("userViewModel", item);
-      }
-    }
+    user = userName.read("userViewModel");
 
     super.initState();
   }
@@ -51,7 +45,8 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin {
               user: user,
             ),
             Expanded(
-              child: Container(
+                child: Obx(
+              () => Container(
                   padding: help.getPaddingByDirection(bottom: 20),
                   decoration: BoxDecoration(
                       color: const Color(0xFFE7EBF8),
@@ -69,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin {
                         ),
                       )),
                   child: Skeleton(
-                    isLoading: showLoading,
+                    isLoading: showLoading.value,
                     skeleton: SkeletonListView(
                         padding: EdgeInsets.symmetric(
                       vertical: ScreenUtil().setWidth(40),
@@ -79,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin {
                         physics: const BouncingScrollPhysics(),
                         itemCount: users.length,
                         itemBuilder: (context, index) {
-                          return username != users[index].email
+                          return user != users[index]
                               ? GestureDetector(
                                   onTap: () {
                                     Get.to(
@@ -202,7 +197,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin {
                               : const SizedBox();
                         }),
                   )),
-            )
+            ))
           ],
         ),
         // This trailing comma makes auto-formatting nicer for build methods.
@@ -216,11 +211,11 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin {
       await Future.delayed(const Duration(seconds: 5));
 
       setState(() {
-        showLoading = false;
+        showLoading.value = false;
       });
     } catch (e) {
       setState(() {
-        showLoading = false;
+        showLoading.value = false;
       });
     }
   }

@@ -22,11 +22,9 @@ class _LoginPageState extends State<LoginPage> {
   bool showErrorname = false;
   TextEditingController? userNameController = TextEditingController();
   static TextEditingController? emailController = TextEditingController();
-  // List<personViewModel> users = List<personViewModel>.empty(growable: true);
 
   @override
   void initState() {
-    // users = AppDatabase.user;
     Get.put(AppDatabase.user);
     super.initState();
   }
@@ -182,7 +180,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   login() {
-    List<PersonViewModel> users = Get.find();
+    RxList<PersonViewModel> users = Get.find();
 
     try {
       if (emailController!.text == "" || userNameController!.text == "") {
@@ -221,7 +219,7 @@ class _LoginPageState extends State<LoginPage> {
           if (emailController!.text == item.email &&
               userNameController!.text == item.name) {
             GetStorage userName = GetStorage();
-            userName.write("name", item.email);
+            userName.write("userViewModel", item);
             // Get.closeAllSnackbars();
             Get.closeCurrentSnackbar();
             Get.off(const MyHomePage());

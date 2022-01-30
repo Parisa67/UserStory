@@ -16,13 +16,12 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  List<PersonViewModel> users = List<PersonViewModel>.empty(growable: true);
-  List<PersonViewModel> friendList =
-      List<PersonViewModel>.empty(growable: true);
+  RxList<PersonViewModel> users = <PersonViewModel>[].obs;
+  RxList<PersonViewModel> friendList = <PersonViewModel>[].obs;
   PersonViewModel temp = PersonViewModel();
   PersonViewModel selectuser = PersonViewModel();
   PersonViewModel userviewModel = PersonViewModel();
-  bool showEdit = false;
+  RxBool showEdit = false.obs;
   @override
   void initState() {
     GetStorage userName = GetStorage();
@@ -31,19 +30,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
     users = Get.find();
 
-    // for (var item in selectuser.friends!) {
-    //   if (users.any((element) => element.guid == item.guid)) {
-    //     temp = users.firstWhere((element) => element.guid == item.guid);
-    //     friendList.add(temp);
-    //   }
-    // }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (userviewModel.email == selectuser.email) {
-      showEdit = true;
+    if (userviewModel == selectuser) {
+      showEdit.value = true;
     }
     for (var item in selectuser.friends!) {
       if (users.any((element) => element.guid == item.guid)) {
@@ -169,7 +162,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       SizedBox(
                                         width: ScreenUtil().setWidth(20),
                                       ),
-                                      showEdit
+                                      showEdit.value
                                           ? CustomeButton(
                                               title: "Edit",
                                               callback: () {},
@@ -218,7 +211,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         return GestureDetector(
                                           onTap: () {
                                             setState(() {
-                                              showEdit = false;
+                                              showEdit.value = false;
                                               selectuser = friendList[index];
                                               friendList.clear();
                                             });

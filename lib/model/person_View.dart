@@ -1,8 +1,11 @@
+import 'package:get/get.dart';
 import 'package:userstory/view_model/friend_view_model.dart';
 import 'package:userstory/view_model/person_view_model.dart';
 
 class AppDatabase {
-  static List<PersonViewModel> get user {
+  // RxList<PersonViewModel> users = <PersonViewModel>[].obs;
+
+  static RxList<PersonViewModel> get user {
     return [
       PersonViewModel(
           guid: "1791c941-9939-4970-be9a-09739587d69b",
@@ -202,6 +205,6 @@ class AppDatabase {
           friends: [],
           greeting: "Hello, Tracie Cervantes! You have 3 unread messages.",
           favoriteFruit: "strawberry")
-    ];
+    ].obs;
   }
 }
